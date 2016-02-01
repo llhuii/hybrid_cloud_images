@@ -4,9 +4,7 @@ API versions	List API versions	GET	/
 	Show API version details	GET	/v2			N	Y	List/show operations could be supported if Create is implemented.
 API extensions (extensions)	List API extensions	GET	/v2/{tenant_id}/extensions			N	Y	
 Limits (limits)	Show absolute limits	GET	/v2/{tenant_id}/limits			N	Y	"DB, check quotas."
-Volumes (volumes)	Create volume	POST	/v2/{tenant_id}/volumes	tenant_id	N	Y	Y	"Create empty disk. 
-
-Snapshot>source_volid>source_replica>imageRef"
+Volumes (volumes)	Create volume	POST	/v2/{tenant_id}/volumes	tenant_id	N	Y	Y	"Create empty disk. \nSnapshot>source_volid>source_replica>imageRef"
 				availability_zone	Y	Y	Y	
 				source_volid	Y	Y	Y	"Attach source/dest volume, copy"
 				description	Y	Y	Y	
@@ -68,7 +66,8 @@ Backups (backups)	Create backup	POST	/v2/{tenant_id}/backups	tenant_id		Y	Y	vClo
 				volume_id	Y		Y	
 				container	N		Y	
 				description	Y		Y	
-				incremental 	Y	?	N	"The backup mode: True for incremental backup mode, False for full backup mode."
+				incremental 	Y	?	N	"The backup mode: True for incremental backup mode,
+				False for full backup mode."
 	List backups	GET	/v2/{tenant_id}/backups	tenant_id	N	Y	Y	
 				sort_key?	N	Y	Y	
 				sort_dir 	Y	Y	Y	
