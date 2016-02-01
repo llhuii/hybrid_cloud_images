@@ -1,0 +1,137 @@
+Category	API	Description	Method	URI	Parameters	Optional	FusionSphere Support	Hybrid Cloud Support	Solution
+Block Storage API v2 (CURRENT)									
+API versions	List API versions	List APILists information about all Block Storage API versions. versions	GET	/					
+	Show API version details	Shows details for Block Storage API v2.	GET	/v2			N	Y	List/show operations could be supported if Create is implemented.
+API extensions (extensions)	List API extensions	Lists Block Storage API extensions.	GET	/v2/{tenant_id}/extensions			N	Y	
+Limits (limits)	Show absolute limits	Shows absolute limits for a tenant.	GET	/v2/{tenant_id}/limits			N	Y	"DB, check quotas."
+Volumes (volumes)	Create volume	Creates a volume.	POST	/v2/{tenant_id}/volumes	tenant_id	N	Y	Y	"Create empty disk. 
+
+Snapshot>source_volid>source_replica>imageRef"
+					availability_zone	Y	Y	Y	
+					source_volid	Y	Y	Y	"Attach source/dest volume, copy"
+					description	Y	Y	Y	
+					multiattach	Y	N	N	Attach at most one server
+					snapshot_id	Y	Y	Y	
+					size	N	Y	Y	Size>snapshot_size>source_volid_size>source_replica_size
+					name	Y	Y	Y	
+					imageRef	Y	Y	Y	Copy into volume.
+					volume_type	Y	N	Y	multiple-storage back ends
+					metadata	Y	N	Y	DB
+					source_replica?	Y	N	N	 replicated (secondary) volume?
+					consistencygroup_id	Y	N	N	
+	List volumes	Lists summary information for all Block Storage volumes that the tenant who submits the request can access.	GET	/v2/{tenant_id}/volumes	tenant_id	N	Y	Y	
+					sort	Y	Y	Y	
+					limit?	Y	Y	Y	
+					marker?	Y	Y	Y	
+	List volumes (detailed)	Lists detailed information for all Block Storage volumes that the tenant who submits the request can access.	GET	/v2/{tenant_id}/volumes/detail	tenant_id	N	Y	Y	
+					sort	Y	Y	Y	
+					limit?	Y	Y	Y	
+					marker?	Y	Y	Y	
+	Show volume information	Shows information about a specified volume.	GET	/v2/{tenant_id}/volumes/{volume_id}	tenant_id	N	Y	Y	
+					volume_id	N	Y	Y	
+	Update volume	Updates a volume.	PUT	/v2/{tenant_id}/volumes/{volume_id}	tenant_id	N	N	Y	"DB only: ""name"", ""description"", ""metadata""."
+					volume_id	N	N	Y	
+					name	Y	N	Y	
+					description	Y	N	Y	
+					metadata	Y	N	Y	
+					availability_zone	Y	N	N	
+					source_volid	Y	N	N	
+					multiattach	Y	N	N	
+					snapshot_id	Y	N	N	
+					size	Y	N	N	
+					imageRef	Y	N	N	
+					volume_type	Y	N	N	
+					source_replica?	Y	N	N	
+					consistencygroup_id	Y	N	N	
+	Delete volume	Deletes a specified volume.	DELETE	/v2/{tenant_id}/volumes/{volume_id}	tenant_id	N	Y	Y	
+					volume_id	N	N	Y	
+Volume type access (volumes)	Create private volume	Creates a private Block Storage volume.	POST	/v2/{tenant_id}/volumes	tenant_id	N	N	Y?	
+"Volume actions (volumes, action)"	Extend volume	Extends the size of a specified volume to a new size requested in gibibytes (GiB). Specify theos-extendaction in the request body.	POST	/v2/{tenant_id}/volumes/{volume_id}/action			N	N	vCloud doesn't support resize disk.
+	Reset volume statuses	"Resets the status, attach status, and migration status for a specified volume. Specify theos-reset_statusaction in the request body."	POST	/v2/{tenant_id}/volumes/{volume_id}/action	tenant_id	N	N	Y	DB only
+					volume_id	N	N	Y	
+					status	Y	N	Y	
+					attach_status	Y	N	Y	
+					migration_status	Y	N	Y	
+	Set image metadata for volume	Sets the image metadata for a specified volume. Specify theos-set_image_metadataaction in the request body.	POST	/v2/{tenant_id}/volumes/{volume_id}/action	tenant_id	N	N	Y	DB only
+					volume_id	N	N	Y	
+					metadata	N	N	Y	
+	Remove image metadata from volume	"Removes image metadata, by key, from a specified volume. Specify theos-unset_image_metadataaction in the request body and thekeyfor the metadata key and value pair that you want to remove."	POST	/v2/{tenant_id}/volumes/{volume_id}/action	tenant_id	N	N	Y	DB only
+					volume_id	N	N	Y	
+					key	N	N	Y	metadata key to be removed
+	Attach volume	Attaches the specified volume to the specified server. Specify theos-attachaction in the request body.	POST	/v2/{tenant_id}/volumes/{volume_id}/action	tenant_id	N	Y	Y	vCloud vm disk/attach
+					volume_id	N	Y	Y	
+					instance_uuid?	Y	Y	Y	
+					host_name?	Y	Y	Y	
+					mountpoint?	Y	Y	Y	
+Backups (backups)	Create backup	Creates a Block Storage backup from a volume.	POST	/v2/{tenant_id}/backups	tenant_id		Y	Y	vCloud volume download/upload.
+					name	N		Y	
+					volume_id	Y		Y	
+					container	N		Y	
+					description	Y		Y	
+					incremental 	Y	?	N	"The backup mode: True for incremental backup mode, False for full backup mode."
+	List backups	Lists backups defined in Block Storage to which the tenant who submits the request has access.	GET	/v2/{tenant_id}/backups	tenant_id	N	Y	Y	
+					sort_key?	N	Y	Y	
+					sort_dir 	Y	Y	Y	
+					limit?	Y	Y	Y	
+					marker?	Y	Y	Y	
+	List backups (detailed)	Lists detailed information for backups defined in Block Storage to which the tenant who submits the request has access.	GET	/v2/{tenant_id}/backups/detail	tenant_id	N	Y	Y	
+					sort_key?	Y	Y	Y	
+					sort_dir 	Y	Y	Y	
+					limit?	Y	Y	Y	
+					marker?	Y	Y	Y	
+	Show backup details	Shows details for a specified backup.	GET	/v2/{tenant_id}/backups/{backup_id}	tenant_id	N	Y	Y	
+					backup_id	N	Y	Y	
+					sort_key?	N	Y	Y	
+					sort_dir 	Y	Y	Y	
+					limit?	Y	Y	Y	
+					marker?	Y	Y	Y	
+	Delete backup	Deletes a specified backup.	DELETE	/v2/{tenant_id}/backups/{backup_id}	tenant_id	N	Y	Y	
+					backup_id	N	Y	Y	
+	Restore backup	Restores a Block Storage backup to an existing or new Block Storage volume.	POST	/v2/{tenant_id}/backups/{backup_id}/restore	tenant_id	N	Y	Y	Upload into volume path. (Brick?)
+					backup_id	N			
+					volume_id?	N			
+"Backup actions (backups, action)"	Force-delete backup	Force-deletes a specified backup. Specify the os-force_delete action in the request body.	POST	/v2/{tenant_id}/backups/{backup_id}/action	tenant_id	N	N	Y	"FS supported, but code not Implemented?
+Check cinder/api/contrib/admin_actions.py"
+					backup_id	N			
+Capabilities for storage back ends (capabilities)	Show back-end capabilities	Shows capabilities for a specified storage back end.	GET	/v2/{tenant_id}/capabilities/{hostname}		N	N	N	To check details.
+Quota sets extension (os-quota-sets)	Show quotas	Shows quotas for a tenant.	GET	/v2/{tenant_id}/os-quota-sets/{tenant_id}	admin_tenant_id	N	Y	Y	Administrative only.
+					tenant_id	N	Y	Y	
+					usage?	N	Y	Y	Details for quota
+	Update quotas	Updates quotas for a tenant.	PUT	/v2/{tenant_id}/os-quota-sets/{tenant_id}		Y			
+	Delete quotas	Deletes quotas for a tenant so the quotas revert to default values.	DELETE	/v2/{tenant_id}/os-quota-sets/{tenant_id}					
+	Get default quotas	Gets default quotas for a tenant.	GET	/v2/{tenant_id}/os-quota-sets/defaults					
+	Show quotas for user	Enables an admin user to show quotas for a specified tenant and user.	GET	/v2/{tenant_id}/os-quota-sets/{tenant_id}/{user_id}					
+	Update quotas for user	Updates quotas for a specified tenant/project and user.	PUT	/v2/{tenant_id}/os-quota-sets/{tenant_id}/{user_id}					
+	Delete quotas for user	Deletes quotas for a user so that the quotas revert to default values.	DELETE	/v2/{tenant_id}/os-quota-sets/{tenant_id}/{user_id}					
+	Show quota details for user	Shows details for quotas for a specified tenant and user.	GET	/v2/{tenant_id}/os-quota-sets/{tenant_id}/detail/{user_id}					
+Quality of service (QoS) specifications (qos-specs)	Create QoS specification	Creates a QoS specification.	POST	/v2/{tenant_id}/qos-specs			N	Y	DB Only. Associated with volume type.
+	List QoS specs	Lists quality of service (QoS) specifications.	GET	/v2/{tenant_id}/qos-specs		N	N	Y	
+	Show QoS specification details	Shows details for a specified QoS specification.	GET	/v2/{tenant_id}/qos-specs/{qos_id}			N	Y	
+	Set or unset keys in QoS specification	Sets or unsets keys in a specified QoS specification.	PUT	/v2/{tenant_id}/qos-specs/{qos_id}			N	Y	
+	Delete QoS specification	Deletes a specified QoS specification.	DELETE	/v2/{tenant_id}/qos-specs/{qos_id}			N	Y	
+	Associate QoS specification with volume type	Associates a QoS specification with a specified volume type.	GET	/v2/{tenant_id}/qos-specs/{qos_id}/associate			N	Y	
+	Disassociate QoS specification from volume type	Disassociates a QoS specification from a specified volume type.	GET	/v2/{tenant_id}/qos-specs/{qos_id}/disassociate			N	Y	
+	Disassociate QoS specification from all associations	Disassociates a specified QoS specification from all associations.	GET	/v2/{tenant_id}/qos-specs/{qos_id}/disassociate_all			N	Y	
+	Get all associations for QoS specification	Gets all associations for a specified QoS specification.	GET	/v2/{tenant_id}/qos-specs/{qos_id}/associations			N	Y	
+Volume types (types)	List volume types	Lists volume types.	GET	/v2/{tenant_id}/types			N	Y	
+	Create volume type	Creates a volume type.	POST	/v2/{tenant_id}/types			N	Y	
+	Update volume type	Updates a volume type.	PUT	/v2/{tenant_id}/types/{volume_type_id}			N	Y	
+	Update extra specs for a volume type	Updates the extra specifications assigned to a volume type.	PUT	/v2/{tenant_id}/types/{volume_type_id}			N	Y	
+	Show volume type information	Shows information about a specified volume type.	GET	/v2/{tenant_id}/types/{volume_type_id}			N	Y	
+	Delete volume type	Deletes a specified volume type.	DELETE	/v2/{tenant_id}/types/{volume_type_id}			N	Y	
+Volume snapshots (snapshots)	Create snapshot	"Creates a snapshot, which is a point-in-time complete copy of a volume. You can create a volume from the snapshot."	POST	/v2/{tenant_id}/snapshots	tenant_id	N	Y	Y?	Where store?
+					volume_id?	N	Y		
+					name?	Y	Y		
+					description?	Y	Y		
+					new_size?	Y	Y		
+					metadata	Y	N		
+					force?	Y	Y		
+	List snapshots	Lists summary information for all Block Storage snapshots that the tenant who submits the request can access.	GET	/v2/{tenant_id}/snapshots			Y		
+	List snapshots (detailed)	Lists detailed information for all Block Storage snapshots that the tenant who submits the request can access.	GET	/v2/{tenant_id}/snapshots/detail			Y		
+	Show snapshot information	Shows information for a specified snapshot.	GET	/v2/{tenant_id}/snapshots/{snapshot_id}			Y		
+	Update snapshot	Updates a specified snapshot.	PUT	/v2/{tenant_id}/snapshots/{snapshot_id}			N		
+	Delete snapshot	Deletes a specified snapshot.	DELETE	/v2/{tenant_id}/snapshots/{snapshot_id}			Y		
+	Show snapshot metadata	Shows the metadata for a specified snapshot.	GET	/v2/{tenant_id}/snapshots/{snapshot_id}/metadata			N		
+	Update snapshot metadata	Updates the metadata for a specified snapshot.	PUT	/v2/{tenant_id}/snapshots/{snapshot_id}/metadata			N		
+Volume manage extension (os-volume-manage)	Manage existing volume	Creates a Block Storage volume by using existing storage rather than allocating new storage.	POST	/v2/{tenant_id}/os-volume-manage			N	N	
+Volume image metadata extension (os-vol-image-meta)	Show image metadata for volume	Shows image metadata that is associated with a specified volume.	GET	/v2/{tenant_id}/os-vol-image-meta			N	Y	
